@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>纸型管理 · 高保真原型 (Avalonia Fluent 风格)</title>
+<style>
+  :root {
+    --accent: #0067c0; --accent-hover: #1975c5;
+    --bg-app: #f3f3f3; --bg-window: #fbfbfb; --bg-card: #ffffff; --bg-card-hover: #f7f9fc;
+    --stroke: #e6e6e6; --stroke-strong: #d6d6d6;
+    --text-primary: #1a1a1a; --text-secondary: #5f6368; --text-tertiary: #8a8f98;
+    --ok: #0f8a4f; --ok-soft: #e6f4ec; --warn: #b9610a; --warn-soft: #fbeede;
+    --danger: #c42b1c; --danger-soft: #fde7e4; --info: #0067c0; --info-soft: #e5f0fb;
+    --accent-soft: #e5f0fb;
+    --radius-window: 12px; --radius-card: 10px; --radius-btn: 6px;
+    --shadow-window: 0 18px 50px rgba(0,0,0,.28), 0 3px 10px rgba(0,0,0,.12);
+    --font: "Segoe UI", "Microsoft YaHei UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  }
+  body.dark {
+    --accent: #4cc2ff; --accent-hover: #47b1e8;
+    --bg-app: #1f1f1f; --bg-window: #272727; --bg-card: #2d2d2d; --bg-card-hover: #333333;
+    --stroke: #3a3a3a; --stroke-strong: #4a4a4a;
+    --text-primary: #ffffff; --text-secondary: #c8ccd1; --text-tertiary: #9aa0a6;
+    --ok: #5fd699; --ok-soft: #16321f; --warn: #f5b362; --warn-soft: #3a2a14;
+    --danger: #ff99a4; --danger-soft: #3a1d1d; --info: #4cc2ff; --info-soft: #19324a;
+    --accent-soft: #19324a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%; font-family: var(--font);
+    background: linear-gradient(135deg, #c9d6e8 0%, #dfe6ee 45%, #e9eef3 100%);
+    display: flex; align-items: center; justify-content: center; padding: 28px;
+    color: var(--text-primary); -webkit-font-smoothing: antialiased;
+  }
+  body.dark { background: linear-gradient(135deg, #0e1118 0%, #14171f 50%, #181c24 100%); }
+
+  .window {
+    width: 880px; max-width: 100%; height: 680px;
+    background: var(--bg-window); border-radius: var(--radius-window);
+    box-shadow: var(--shadow-window); overflow: hidden; display: flex; flex-direction: column;
+    border: 1px solid rgba(255,255,255,.5);
+  }
+  body.dark .window { border-color: rgba(255,255,255,.06); }
+
+  /* 标题栏 */
+  .titlebar {
+    height: 44px; display: flex; align-items: center; padding: 0 8px 0 16px;
+    background: var(--bg-window); border-bottom: 1px solid var(--stroke); user-select: none;
+  }
+  .titlebar .left { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .logo-dot { width: 18px; height: 18px; border-radius: 5px;
+    background: linear-gradient(135deg, var(--accent), #6b3fd1); }
+  .titlebar .title-text { font-size: 12.5px; font-weight: 600; color: var(--text-secondary); }
+  .win-controls { display: flex; gap: 2px; }
+  .win-btn { width: 44px; height: 32px; border: none; background: transparent; display: grid;
+    place-items: center; border-radius: 6px; cursor: pointer; color: var(--text-secondary); }
+  .win-btn:hover { background: rgba(0,0,0,.06); }
+  body.dark .win-btn:hover { background: rgba(255,255,255,.08); }
+  .win-btn.close:hover { background: #c42b1c; color: #fff; }
+  .win-btn svg { width: 10px; height: 10px; }
+
+  /* 头部 */
+  .hero { padding: 20px 26px 14px; display: flex; align-items: center; gap: 14px; }
+  .hero .logo { width: 44px; height: 44px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), #6b3fd1); display: grid; place-items: center;
+    color: #fff; flex-shrink: 0; }
+  .hero .logo svg { width: 24px; height: 24px; }
+  .hero h1 { font-size: 19px; font-weight: 700; }
+  .hero p { font-size: 12.5px; color: var(--text-secondary); margin-top: 2px; }
+  .hero .spacer { flex: 1; }
+  .icon-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--stroke-strong);
+    background: var(--bg-card); display: grid; place-items: center; cursor: pointer;
+    color: var(--text-secondary); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  .body { flex: 1; overflow-y: auto; padding: 0 26px 18px; }
+  .body::-webkit-scrollbar { width: 10px; }
+  .body::-webkit-scrollbar-thumb { background: rgba(0,0,0,.18); border-radius: 6px;
+    border: 3px solid transparent; background-clip: padding-box; }
+  body.dark .body::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); background-clip: padding-box; }
+
+  /* 新建纸型卡片 */
+  .panel { background: var(--bg-card); border: 1px solid var(--stroke); border-radius: var(--radius-card);
+    padding: 18px 20px; margin-bottom: 16px; }
+  .panel-title { font-size: 13px; font-weight: 700; color: var(--text-secondary);
+    letter-spacing: .5px; margin-bottom: 14px; }
+
+  /* 分段选择器（三类纸型） */
+  .segmented { display: inline-flex; background: var(--bg-app); border: 1px solid var(--stroke-strong);
+    border-radius: 8px; padding: 3px; gap: 3px; margin-bottom: 16px; }
+  .seg { padding: 8px 18px; border-radius: 6px; font-size: 13px; cursor: pointer; border: none;
+    background: transparent; color: var(--text-secondary); font-family: var(--font); font-weight: 500; }
+  .seg.active { background: var(--accent); color: #fff; font-weight: 600;
+    box-shadow: 0 1px 4px rgba(0,103,192,.35); }
+
+  /* 表单 */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field.full { grid-column: 1 / -1; }
+  .field label { font-size: 12.5px; color: var(--text-secondary); }
+  .field .input { height: 38px; border: 1px solid var(--stroke-strong); border-radius: 8px;
+    background: var(--bg-card); padding: 0 12px; font-size: 13.5px; color: var(--text-primary);
+    display: flex; align-items: center; }
+  .field .input.ph { color: var(--text-tertiary); }
+  .units { color: var(--text-tertiary); font-size: 12px; margin-left: auto; }
+
+  .margins { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .margins .field label { font-size: 11.5px; }
+  .margins .input { height: 34px; }
+
+  .hint { margin-top: 12px; font-size: 12.5px; color: var(--info);
+    background: var(--info-soft); border-radius: 8px; padding: 8px 12px; display: inline-flex; gap: 8px; align-items: center; }
+  .hint svg { width: 15px; height: 15px; }
+
+  /* 重复提示（红字） */
+  .dup { margin-top: 12px; font-size: 12.5px; color: var(--danger);
+    background: var(--danger-soft); border-radius: 8px; padding: 9px 12px; display: none; gap: 8px; align-items: center; }
+  .dup.show { display: inline-flex; }
+  .dup svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+  .actions { margin-top: 16px; display: flex; align-items: center; gap: 12px; }
+  .btn { height: 38px; padding: 0 20px; border-radius: var(--radius-btn); font-size: 13px;
+    font-weight: 600; cursor: pointer; border: 1px solid transparent; font-family: var(--font);
+    display: inline-flex; align-items: center; gap: 7px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  body.dark .btn-primary { color: #07243a; }
+  .btn-ghost { background: var(--bg-card); color: var(--text-primary); border-color: var(--stroke-strong); }
+  .uac { font-size: 11.5px; color: var(--text-tertiary); display: inline-flex; align-items: center; gap: 5px; }
+  .uac svg { width: 14px; height: 14px; }
+
+  /* 已存在纸型列表 */
+  .list-head { display: flex; align-items: center; gap: 8px; margin: 4px 0 10px; }
+  .list-head .t { font-size: 13px; font-weight: 700; color: var(--text-secondary); letter-spacing: .5px; }
+  .list-head .src { font-size: 11.5px; color: var(--text-tertiary); }
+
+  table { width: 100%; border-collapse: collapse; background: var(--bg-card);
+    border: 1px solid var(--stroke); border-radius: var(--radius-card); overflow: hidden; }
+  thead th { text-align: left; font-size: 11.5px; font-weight: 600; color: var(--text-tertiary);
+    padding: 11px 14px; background: var(--bg-app); border-bottom: 1px solid var(--stroke); }
+  tbody td { padding: 12px 14px; font-size: 13px; border-bottom: 1px solid var(--stroke);
+    color: var(--text-primary); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--bg-card-hover); }
+  .tag { display: inline-block; font-size: 11.5px; padding: 2px 9px; border-radius: 11px; font-weight: 600; }
+  .tag-2 { background: var(--info-soft); color: var(--info); }
+  .tag-3 { background: #f0e8fb; color: #7c3aed; }
+  body.dark .tag-3 { background: #2a1d3a; color: #c4a5f5; }
+  .tag-c { background: var(--ok-soft); color: var(--ok); }
+  .tag-sys { background: #eceef0; color: #5f6368; }
+  body.dark .tag-sys { background: #34373c; color: #b0b4ba; }
+  .row-act { display: inline-flex; gap: 6px; }
+  .mini { height: 28px; padding: 0 12px; border-radius: 6px; font-size: 12px; cursor: pointer;
+    border: 1px solid var(--stroke-strong); background: var(--bg-card); color: var(--text-primary);
+    font-family: var(--font); display: inline-flex; align-items: center; }
+  .mini.danger { color: var(--danger); }
+  .mini.disabled { opacity: .45; cursor: not-allowed; }
+  .builtin-note { font-size: 11.5px; color: var(--text-tertiary); }
+
+  .statusbar { height: 34px; border-top: 1px solid var(--stroke); background: var(--bg-window);
+    display: flex; align-items: center; padding: 0 20px; gap: 16px; font-size: 12px;
+    color: var(--text-secondary); }
+  .statusbar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+  .statusbar .spacer { flex: 1; }
+</style>
+</head>
+<body>
+  <div class="window">
+    <!-- 标题栏 -->
+    <div class="titlebar">
+      <div class="left">
+        <div class="logo-dot"></div>
+        <span class="title-text">普讯科技应用管家 · 纸型管理</span>
+      </div>
+      <div class="win-controls">
+        <button class="win-btn"><svg viewBox="0 0 10 10"><path d="M0 5h10" stroke="currentColor"/></svg></button>
+        <button class="win-btn"><svg viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" fill="none" stroke="currentColor"/></svg></button>
+        <button class="win-btn close"><svg viewBox="0 0 10 10"><path d="M0 0l10 10M10 0L0 10" stroke="currentColor"/></svg></button>
+      </div>
+    </div>
+
+    <!-- 头部 -->
+    <div class="hero">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="9" width="16" height="8" rx="1.2" stroke="currentColor" stroke-width="1.6"/><path d="M7 9V5h10v4M7 17v3h10v-3" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <h1>纸型管理</h1>
+        <p>管理本机打印服务器的纸型（表单）· 新增 / 编辑 / 删除</p>
+      </div>
+      <div class="spacer"></div>
+      <button class="icon-btn" id="themeBtn" title="切换深浅色">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+
+    <div class="body">
+      <!-- 新建纸型 -->
+      <div class="panel">
+        <div class="panel-title">新建纸型</div>
+
+        <div class="segmented">
+          <button class="seg active" data-cat="2" data-parts="2">一式二等份</button>
+          <button class="seg" data-cat="3" data-parts="3">一式三等份</button>
+          <button class="seg" data-cat="c" data-parts="1">自定义</button>
+        </div>
+
+        <div class="form-grid">
+          <div class="field full">
+            <label>纸型名称</label>
+            <div class="input ph">例如：收银小票二联</div>
+          </div>
+          <div class="field">
+            <label>整张纸 宽 (mm)</label>
+            <div class="input">210<span class="units">mm</span></div>
+          </div>
+          <div class="field">
+            <label>整张纸 高 (mm)</label>
+            <div class="input">140<span class="units">mm</span></div>
+          </div>
+
+          <!-- 自定义才显示的边距 -->
+          <div class="field full" id="marginsField" style="display:none">
+            <label>可打印边距 (mm)</label>
+            <div class="margins">
+              <div class="field"><label>上</label><div class="input">0</div></div>
+              <div class="field"><label>下</label><div class="input">0</div></div>
+              <div class="field"><label>左</label><div class="input">0</div></div>
+              <div class="field"><label>右</label><div class="input">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 等份提示 -->
+        <div class="hint" id="partHint">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6"/></svg>
+          注册为整张纸尺寸 210 × 140 mm，按 2 等份切分，每份 210 × 70 mm
+        </div>
+
+        <!-- 重复提示（红） -->
+        <div class="dup show" id="dup">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7v6M12 16.5v.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          已存在相同尺寸的纸型「收银小票二联」(210×140，2 等份)，不予添加。
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary">添加</button>
+          <span class="uac">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="1.5"/></svg>
+            增 / 改 / 删 需管理员权限（将弹出一次 UAC）
+          </span>
+        </div>
+      </div>
+
+      <!-- 已存在纸型列表 -->
+      <div class="list-head">
+        <span class="t">已存在纸型</span>
+        <span class="src">（来自本机打印服务器，含系统内置）</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:30%">名称</th>
+            <th style="width:16%">类别</th>
+            <th style="width:18%">宽 × 高 (mm)</th>
+            <th style="width:10%">等份</th>
+            <th style="width:14%">每份高 (mm)</th>
+            <th style="width:12%">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>收银小票二联</td>
+            <td><span class="tag tag-2">一式二等份</span></td>
+            <td>210 × 140</td>
+            <td>2</td>
+            <td>70</td>
+            <td><div class="row-act"><button class="mini">编辑</button><button class="mini danger">删除</button></div></td>
+          </tr>
+          <tr>
+            <td>增值税发票三联</td>
+            <td><span class="tag tag-3">一式三等份</span></td>
+            <td>241 × 280</td>
+            <td>3</td>
+            <td>93.3</td>
+            <td><div class="row-act"><button class="mini">编辑</button><button class="mini danger">删除</button></div></td>
+          </tr>
+          <tr>
+            <td>出库单自定义</td>
+            <td><span class="tag tag-c">自定义</span></td>
+            <td>190 × 120</td>
+            <td>—</td>
+            <td>—</td>
+            <td><div class="row-act"><button class="mini">编辑</button><button class="mini danger">删除</button></div></td>
+          </tr>
+          <tr>
+            <td>A4</td>
+            <td><span class="tag tag-sys">系统内置</span></td>
+            <td>210 × 297</td>
+            <td>—</td>
+            <td>—</td>
+            <td><span class="builtin-note">内置不可改/删</span></td>
+          </tr>
+          <tr>
+            <td>Letter</td>
+            <td><span class="tag tag-sys">系统内置</span></td>
+            <td>215.9 × 279.4</td>
+            <td>—</td>
+            <td>—</td>
+            <td><span class="builtin-note">内置不可改/删</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 状态栏 -->
+    <div class="statusbar">
+      <span class="dot"></span>
+      <span>打印后台服务正常 · 共 5 个纸型（3 个自建 / 2 个系统内置）</span>
+      <span class="spacer"></span>
+      <span>普讯科技应用管家 v1.0.0</span>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('themeBtn').addEventListener('click', () => document.body.classList.toggle('dark'));
+
+    const segs = document.querySelectorAll('.seg');
+    const partHint = document.getElementById('partHint');
+    const marginsField = document.getElementById('marginsField');
+    const dup = document.getElementById('dup');
+
+    function widthVal(){ return 210; }
+    function heightVal(){ return 140; }
+
+    segs.forEach(s => s.addEventListener('click', () => {
+      segs.forEach(x => x.classList.remove('active'));
+      s.classList.add('active');
+      const parts = parseInt(s.dataset.parts, 10);
+      const isCustom = s.dataset.cat === 'c';
+      marginsField.style.display = isCustom ? '' : 'none';
+      if (isCustom) {
+        partHint.style.display = 'none';
+      } else {
+        partHint.style.display = 'inline-flex';
+        const h = heightVal();
+        partHint.querySelector('svg').nextSibling; // keep icon
+        partHint.lastChild.textContent =
+          ` 注册为整张纸尺寸 ${widthVal()} × ${h} mm，按 ${parts} 等份切分，每份 ${widthVal()} × ${(h/parts).toFixed(parts===3?1:0)} mm`;
+      }
+    }));
+  </script>
+</body>
+</html>
