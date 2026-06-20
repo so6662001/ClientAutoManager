@@ -71,6 +71,29 @@ dotnet test
 
 > 注：检测涉及的注册表读取、UAC 提权、msiexec 静默安装为 Windows 专有能力，需在 Windows 上运行管家本体；Core 业务逻辑可在任意平台编译与单元测试。
 
+## 打包发布
+
+产出 Windows 自包含单文件 exe（目标机无需安装 .NET 运行时）：
+
+```powershell
+# Windows
+pwsh build\publish.ps1                 # 默认 win-x64 Release，输出 artifacts\win-x64
+pwsh build\publish.ps1 -Runtime win-arm64
+```
+
+```bash
+# Linux/macOS 交叉发布
+build/publish.sh Release win-x64 artifacts/win-x64
+```
+
+发布后 **务必代码签名**（见下方"部署前必读"）：
+
+```powershell
+pwsh build\sign.ps1 -File artifacts\win-x64\PuxunAppManager.exe -PfxPath <你的证书.pfx>
+```
+
+> 如需生成标准 MSI 安装包（注册到"程序和功能"、便于客户统一管理），可在此基础上引入 WiX Toolset；当前提供的是绿色单文件发布，已可直接分发运行。
+
 ## 配置
 
 首次运行会在 `%AppData%\PuxunAppManager\config.json` 生成默认配置。可在「设置」中修改后端地址、鉴权、主题等。样例见 [`samples/config.sample.json`](samples/config.sample.json)。
