@@ -34,4 +34,12 @@ public static class ErrorCodes
     public const string AlreadyRunning = "ALREADY_RUNNING";
     public const string Cancelled = "CANCELLED";
     public const string Unknown = "UNKNOWN";
+
+    // 纸型管理
+    public const string PaperDuplicateName = "PAPER_DUPLICATE_NAME";
+    public const string PaperDuplicateSize = "PAPER_DUPLICATE_SIZE";
+    public const string PaperBuiltinReadonly = "PAPER_BUILTIN_READONLY";
+    public const string PaperInvalid = "PAPER_INVALID";
+    public const string PaperSpoolerError = "PAPER_SPOOLER_ERROR";
+    public const string PaperNotFound = "PAPER_NOT_FOUND";
 }

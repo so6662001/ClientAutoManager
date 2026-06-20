@@ -21,7 +21,24 @@ public partial class MainWindow : Window
     private void OnDataContextChanged(object? sender, EventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
+        {
             vm.OpenSettingsAction = OpenSettings;
+            vm.OpenPaperFormsAction = OpenPaperForms;
+        }
+    }
+
+    private void OpenPaperForms()
+    {
+        try
+        {
+            var vm = App.Services.GetRequiredService<ViewModels.PaperFormsViewModel>();
+            var win = new PaperFormsWindow { DataContext = vm };
+            win.ShowDialog(this);
+        }
+        catch
+        {
+            // 打开纸型管理窗口失败不应导致主程序异常
+        }
     }
 
     private void OpenSettings()

@@ -84,6 +84,24 @@
             <Setter Property="CornerRadius" Value="6"/>
         </Style>
 
+        <!-- 分段选择器 -->
+        <Style Selector="ToggleButton.seg">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="18,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+        <Style Selector="ToggleButton.seg:checked">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="ToggleButton.seg:checked /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        </Style>
+
         <!-- 卡片 -->
         <Style Selector="Border.card">
             <Setter Property="Background" Value="{DynamicResource CardBackground}"/>

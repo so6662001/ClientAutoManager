@@ -73,13 +73,20 @@
                 </StackPanel>
             </StackPanel>
 
-            <Button Grid.Column="2" Classes="primary" Height="36"
-                    Command="{Binding RefreshCommand}" VerticalAlignment="Center">
-                <StackPanel Orientation="Horizontal" Spacing="7">
-                    <TextBlock Text="⟳" FontSize="15"/>
-                    <TextBlock Text="重新检测"/>
-                </StackPanel>
-            </Button>
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Button Classes="ghost" Height="36" Command="{Binding OpenPaperFormsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock Text="🖨" FontSize="14"/>
+                        <TextBlock Text="纸型管理"/>
+                    </StackPanel>
+                </Button>
+                <Button Classes="primary" Height="36" Command="{Binding RefreshCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock Text="⟳" FontSize="15"/>
+                        <TextBlock Text="重新检测"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
         </Grid>
 
         <!-- 列表区 -->

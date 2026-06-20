@@ -20,3 +20,7 @@ coverage*.xml
 # Local artifacts
 artifacts/
 *.nupkg
+
+# 非 Windows 上运行时 %AppData% 不展开而产生的本地运行目录
+%AppData%/
+*%AppData%*

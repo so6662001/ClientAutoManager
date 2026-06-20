@@ -70,11 +70,17 @@ public sealed partial class MainWindowViewModel : ViewModelBase, IProductActionH
     /// <summary>由 View 注入：打开设置窗口的动作（保持 VM 不直接依赖窗口类型）。</summary>
     public Action? OpenSettingsAction { get; set; }
 
+    /// <summary>由 View 注入：打开纸型管理窗口的动作。</summary>
+    public Action? OpenPaperFormsAction { get; set; }
+
     [RelayCommand]
     private void ToggleTheme() => App.ToggleTheme();
 
     [RelayCommand]
     private void OpenSettings() => OpenSettingsAction?.Invoke();
+
+    [RelayCommand]
+    private void OpenPaperForms() => OpenPaperFormsAction?.Invoke();
 
     [RelayCommand(CanExecute = nameof(CanScan))]
     private async Task Refresh() => await ScanAsync();

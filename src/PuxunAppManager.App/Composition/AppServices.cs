@@ -2,8 +2,10 @@ using System;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using PuxunAppManager.App.Paper;
 using PuxunAppManager.App.ViewModels;
 using PuxunAppManager.Core.Backend;
+using PuxunAppManager.Core.PaperForms;
 using PuxunAppManager.Core.Configuration;
 using PuxunAppManager.Core.Detection;
 using PuxunAppManager.Core.Infrastructure;
@@ -29,6 +31,7 @@ public static class AppServices
         var logDir = configService.ResolveDirectory(config.Paths.LogDir);
         var downloadDir = configService.ResolveDirectory(config.Paths.DownloadDir);
         var manifestCachePath = configService.ResolveFilePath(config.Paths.ManifestCache);
+        var paperTypesPath = configService.ResolveFilePath(@"%AppData%\PuxunAppManager\paper-types.json");
 
         var loggerFactory = LoggingSetup.CreateLoggerFactory(logDir);
 
@@ -64,9 +67,16 @@ public static class AppServices
 
         services.AddSingleton<IAppManagerService, AppManagerService>();
 
+        // 纸型管理
+        services.AddSingleton<IPaperTypeMetadataStore>(sp =>
+            new PaperTypeMetadataStore(paperTypesPath, sp.GetRequiredService<ILogger<PaperTypeMetadataStore>>()));
+        services.AddSingleton<IPaperFormService, WindowsPaperFormService>();
+        services.AddSingleton<ElevatedPaperFormExecutor>();
+
         // ViewModels
         services.AddSingleton<MainWindowViewModel>();
         services.AddTransient<SettingsViewModel>();
+        services.AddTransient<PaperFormsViewModel>();
 
         return services.BuildServiceProvider();
     }
