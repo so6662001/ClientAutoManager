@@ -1,0 +1,58 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:PuxunAppManager.App.ViewModels"
+        x:Class="PuxunAppManager.App.Views.SettingsWindow"
+        x:DataType="vm:SettingsViewModel"
+        Width="480" Height="520"
+        CanResize="False"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource WindowBackground}"
+        Title="设置 · 普讯科技应用管家">
+
+    <ScrollViewer Padding="24">
+        <StackPanel Spacing="16">
+            <TextBlock Text="后端服务" FontSize="15" FontWeight="Bold"
+                       Foreground="{DynamicResource TextPrimary}"/>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="后端地址 (BaseUrl)" FontSize="12.5" Foreground="{DynamicResource TextSecondary}"/>
+                <TextBox Text="{Binding BaseUrl}" Watermark="https://你们后端域名/api"/>
+            </StackPanel>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="鉴权方式" FontSize="12.5" Foreground="{DynamicResource TextSecondary}"/>
+                <ComboBox ItemsSource="{Binding AuthTypes}" SelectedItem="{Binding AuthType}" HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
+            <StackPanel Spacing="6">
+                <TextBlock Text="鉴权凭据 (Token / API Key)" FontSize="12.5" Foreground="{DynamicResource TextSecondary}"/>
+                <TextBox Text="{Binding AuthValue}" PasswordChar="•"/>
+            </StackPanel>
+
+            <Border Height="1" Background="{DynamicResource CardStroke}" Margin="0,4"/>
+
+            <TextBlock Text="外观" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+            <StackPanel Spacing="6">
+                <TextBlock Text="主题" FontSize="12.5" Foreground="{DynamicResource TextSecondary}"/>
+                <ComboBox ItemsSource="{Binding Themes}" SelectedItem="{Binding Theme}" HorizontalAlignment="Stretch"/>
+            </StackPanel>
+
+            <Border Height="1" Background="{DynamicResource CardStroke}" Margin="0,4"/>
+
+            <TextBlock Text="维护" FontSize="15" FontWeight="Bold" Foreground="{DynamicResource TextPrimary}"/>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Classes="ghost" Content="清空清单缓存" Command="{Binding ClearCacheCommand}"/>
+                <Button Classes="ghost" Content="打开日志目录" Command="{Binding OpenLogDirCommand}"/>
+            </StackPanel>
+
+            <TextBlock FontSize="12" Foreground="{DynamicResource TextTertiary}"
+                       Text="{Binding AppVersion, StringFormat='普讯科技应用管家 {0} · 已签名'}"/>
+
+            <TextBlock Text="{Binding StatusMessage}" FontSize="12" TextWrapping="Wrap"
+                       Foreground="{DynamicResource AccentBrush}"/>
+
+            <Button Classes="primary" Content="保存" HorizontalAlignment="Right"
+                    Command="{Binding SaveCommand}"/>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -1,0 +1,65 @@
+[
+  {
+    "productId": "clientA",
+    "displayName": "客户端A · 业务主程序",
+    "description": ".NET 桌面客户端 · 主收银与业务处理",
+    "iconKey": "A",
+    "latestVersion": "2.1.0",
+    "installer": {
+      "downloadUrl": "https://your-backend.example.com/packages/clientA-2.1.0.msi",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "installerType": "msi",
+      "silentArgs": "/i \"{file}\" /qn /norestart",
+      "sizeBytes": 14260736
+    },
+    "detect": {
+      "registryUninstallKey": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{A1111111-1111-1111-1111-111111111111}",
+      "versionRegistryValue": "DisplayVersion",
+      "keyFiles": [
+        { "path": "%ProgramFiles%\\ClientA\\ClientA.exe", "sha256": null }
+      ]
+    }
+  },
+  {
+    "productId": "clientB",
+    "displayName": "客户端B · 报表分析",
+    "description": ".NET 桌面客户端 · 数据报表与导出",
+    "iconKey": "B",
+    "latestVersion": "1.2.0",
+    "installer": {
+      "downloadUrl": "https://your-backend.example.com/packages/clientB-1.2.0.msi",
+      "sha256": null,
+      "installerType": "msi",
+      "silentArgs": "/i \"{file}\" /qn /norestart",
+      "sizeBytes": 9123456
+    },
+    "detect": {
+      "registryUninstallKey": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{B2222222-2222-2222-2222-222222222222}",
+      "versionRegistryValue": "DisplayVersion",
+      "keyFiles": [
+        { "path": "%ProgramFiles%\\ClientB\\ClientB.exe", "sha256": null }
+      ]
+    }
+  },
+  {
+    "productId": "clientE",
+    "displayName": "客户端E · 远程协助",
+    "description": ".NET 桌面客户端 · 远程协助工具",
+    "iconKey": "E",
+    "latestVersion": "1.4.2",
+    "installer": {
+      "downloadUrl": "https://your-backend.example.com/packages/clientE-1.4.2.exe",
+      "sha256": null,
+      "installerType": "exe",
+      "silentArgs": "/S",
+      "sizeBytes": 10276044
+    },
+    "detect": {
+      "registryUninstallKey": "HKLM\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{E5555555-5555-5555-5555-555555555555}",
+      "versionRegistryValue": "DisplayVersion",
+      "keyFiles": [
+        { "path": "%ProgramFiles%\\ClientE\\ClientE.exe", "sha256": null }
+      ]
+    }
+  }
+]
