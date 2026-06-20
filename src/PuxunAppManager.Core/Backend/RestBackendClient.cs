@@ -100,8 +100,10 @@ public sealed class RestBackendClient : IBackendClient
         var targetPath = Path.Combine(_downloadDir, $"{pkg.ProductId}-{pkg.Version}{ext}");
         var tmpPath = targetPath + ".part";
 
-        await RetryPolicy.ExecuteAsync(async token =>
+        try
         {
+            await RetryPolicy.ExecuteAsync(async token =>
+            {
             // === 后端对接点：若下载需特殊鉴权/重定向，在此调整 ===
             using var resp = await _http
                 .GetAsync(pkg.DownloadUrl, HttpCompletionOption.ResponseHeadersRead, token)
@@ -138,9 +140,22 @@ public sealed class RestBackendClient : IBackendClient
             if (File.Exists(targetPath)) File.Delete(targetPath);
             File.Move(tmpPath, targetPath);
             return true;
-        }, _config.MaxRetries, _logger, ct);
+            }, _config.MaxRetries, _logger, ct).ConfigureAwait(false);
 
-        return targetPath;
+            return targetPath;
+        }
+        catch
+        {
+            // 下载彻底失败：清理可能残留的 .part 临时文件，避免占用磁盘（提示词第 9.3 条）
+            TryDelete(tmpPath);
+            throw;
+        }
+    }
+
+    private void TryDelete(string path)
+    {
+        try { if (File.Exists(path)) File.Delete(path); }
+        catch (Exception ex) { _logger.LogWarning(ex, "清理临时下载文件失败：{Path}", path); }
     }
 
     private static string CombineUrl(string baseUrl, string path) =>
