@@ -1,0 +1,26 @@
+# .NET build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+.vs/
+
+# Rider / VS Code
+.idea/
+.vscode/
+
+# Test results
+TestResults/
+*.trx
+coverage*.json
+coverage*.xml
+
+# Local artifacts
+artifacts/
+*.nupkg
+
+# 非 Windows 上运行时 %AppData% 不展开而产生的本地运行目录
+%AppData%/
+*%AppData%*

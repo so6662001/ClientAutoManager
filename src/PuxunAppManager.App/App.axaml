@@ -1,0 +1,114 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="PuxunAppManager.App.App"
+             xmlns:local="using:PuxunAppManager.App"
+             xmlns:conv="using:PuxunAppManager.App.Converters"
+             RequestedThemeVariant="Default">
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <conv:StatusColorConverter x:Key="StatusColor"/>
+            <conv:EnumEqualsConverter x:Key="EnumEquals"/>
+            <conv:OnlineDotConverter x:Key="OnlineDot"/>
+            <conv:StringNotEmptyConverter x:Key="NotEmpty"/>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <Color x:Key="AccentColor">#0067c0</Color>
+                    <SolidColorBrush x:Key="AppBackground" Color="#f3f3f3"/>
+                    <SolidColorBrush x:Key="WindowBackground" Color="#fbfbfb"/>
+                    <SolidColorBrush x:Key="CardBackground" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="CardStroke" Color="#e6e6e6"/>
+                    <SolidColorBrush x:Key="StrokeStrong" Color="#d6d6d6"/>
+                    <SolidColorBrush x:Key="TextPrimary" Color="#1a1a1a"/>
+                    <SolidColorBrush x:Key="TextSecondary" Color="#5f6368"/>
+                    <SolidColorBrush x:Key="TextTertiary" Color="#8a8f98"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#0067c0"/>
+                    <SolidColorBrush x:Key="AccentSoft" Color="#e5f0fb"/>
+                    <SolidColorBrush x:Key="OkBrush" Color="#0f8a4f"/>
+                    <SolidColorBrush x:Key="WarnBrush" Color="#b9610a"/>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <Color x:Key="AccentColor">#4cc2ff</Color>
+                    <SolidColorBrush x:Key="AppBackground" Color="#1f1f1f"/>
+                    <SolidColorBrush x:Key="WindowBackground" Color="#272727"/>
+                    <SolidColorBrush x:Key="CardBackground" Color="#2d2d2d"/>
+                    <SolidColorBrush x:Key="CardStroke" Color="#3a3a3a"/>
+                    <SolidColorBrush x:Key="StrokeStrong" Color="#4a4a4a"/>
+                    <SolidColorBrush x:Key="TextPrimary" Color="#ffffff"/>
+                    <SolidColorBrush x:Key="TextSecondary" Color="#c8ccd1"/>
+                    <SolidColorBrush x:Key="TextTertiary" Color="#9aa0a6"/>
+                    <SolidColorBrush x:Key="AccentBrush" Color="#4cc2ff"/>
+                    <SolidColorBrush x:Key="AccentSoft" Color="#19324a"/>
+                    <SolidColorBrush x:Key="OkBrush" Color="#5fd699"/>
+                    <SolidColorBrush x:Key="WarnBrush" Color="#f5b362"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+
+    <Application.Styles>
+        <FluentTheme />
+
+        <!-- 主操作按钮 -->
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.success">
+            <Setter Property="Background" Value="#0f8a4f"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.warn">
+            <Setter Property="Background" Value="#b9610a"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="Button.ghost">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimary}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource StrokeStrong}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="16,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+        </Style>
+
+        <!-- 分段选择器 -->
+        <Style Selector="ToggleButton.seg">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondary}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="18,8"/>
+            <Setter Property="CornerRadius" Value="6"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+        </Style>
+        <Style Selector="ToggleButton.seg:checked">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="ToggleButton.seg:checked /template/ ContentPresenter">
+            <Setter Property="Background" Value="{DynamicResource AccentBrush}"/>
+        </Style>
+
+        <!-- 卡片 -->
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="{DynamicResource CardBackground}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource CardStroke}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="Padding" Value="16"/>
+        </Style>
+    </Application.Styles>
+</Application>

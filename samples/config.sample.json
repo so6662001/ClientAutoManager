@@ -1,0 +1,17 @@
+{
+  "backend": {
+    "baseUrl": "https://your-backend.example.com/api",
+    "authType": "token",
+    "authValue": "",
+    "timeoutSeconds": 30,
+    "maxRetries": 4
+  },
+  "paths": {
+    "manifestCache": "%AppData%\\PuxunAppManager\\manifest.cache.json",
+    "downloadDir": "%AppData%\\PuxunAppManager\\downloads",
+    "logDir": "%AppData%\\PuxunAppManager\\logs"
+  },
+  "ui": {
+    "theme": "system"
+  }
+}

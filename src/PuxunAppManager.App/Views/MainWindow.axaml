@@ -1,0 +1,228 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:PuxunAppManager.App.ViewModels"
+        mc:Ignorable="d" d:DesignWidth="1080" d:DesignHeight="720"
+        x:Class="PuxunAppManager.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Width="1080" Height="720"
+        MinWidth="900" MinHeight="600"
+        Background="{DynamicResource WindowBackground}"
+        Title="普讯科技应用管家">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- 品牌栏 -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Margin="28,22,20,16">
+            <Border Grid.Column="0" Width="52" Height="52" CornerRadius="14"
+                    VerticalAlignment="Center">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,100%">
+                        <GradientStop Color="#0067c0" Offset="0"/>
+                        <GradientStop Color="#6b3fd1" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <TextBlock Text="盾" FontSize="22" FontWeight="Bold" Foreground="White"
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Border>
+
+            <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center" Spacing="3">
+                <TextBlock Text="普讯科技应用管家" FontSize="21" FontWeight="Bold"
+                           Foreground="{DynamicResource TextPrimary}"/>
+                <TextBlock Text="检测并管理本机已部署的客户端程序 · 安装 / 修复 / 更新"
+                           FontSize="12.5" Foreground="{DynamicResource TextSecondary}"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Button Width="38" Height="38" Padding="0" Classes="ghost"
+                        Command="{Binding ToggleThemeCommand}" ToolTip.Tip="切换深浅色">
+                    <TextBlock Text="◐" FontSize="16" HorizontalAlignment="Center"/>
+                </Button>
+                <Button Width="38" Height="38" Padding="0" Classes="ghost"
+                        Command="{Binding OpenSettingsCommand}" ToolTip.Tip="设置">
+                    <TextBlock Text="⚙" FontSize="16" HorizontalAlignment="Center"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- 工具栏 -->
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,*,Auto" Margin="28,0,28,16">
+            <!-- 搜索 + 筛选 -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="12" VerticalAlignment="Center">
+                <Border Background="{DynamicResource CardBackground}" BorderBrush="{DynamicResource StrokeStrong}"
+                        BorderThickness="1" CornerRadius="8" Width="280" Height="36">
+                    <TextBox Watermark="搜索客户端程序…" Text="{Binding SearchText}"
+                             BorderThickness="0" Background="Transparent" VerticalContentAlignment="Center"
+                             Padding="12,0"/>
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <ToggleButton Content="{Binding TotalCount, StringFormat='全部 {0}'}"
+                                  IsChecked="{Binding ActiveFilter, Converter={StaticResource EnumEquals}, ConverterParameter=all, Mode=OneWay}"
+                                  Command="{Binding SetFilterCommand}" CommandParameter="all"/>
+                    <ToggleButton Content="{Binding NotInstalledCount, StringFormat='未安装 {0}'}"
+                                  IsChecked="{Binding ActiveFilter, Converter={StaticResource EnumEquals}, ConverterParameter=notinstalled, Mode=OneWay}"
+                                  Command="{Binding SetFilterCommand}" CommandParameter="notinstalled"/>
+                    <ToggleButton Content="{Binding UpdatableCount, StringFormat='可更新 {0}'}"
+                                  IsChecked="{Binding ActiveFilter, Converter={StaticResource EnumEquals}, ConverterParameter=updatable, Mode=OneWay}"
+                                  Command="{Binding SetFilterCommand}" CommandParameter="updatable"/>
+                    <ToggleButton Content="{Binding BrokenCount, StringFormat='已损坏 {0}'}"
+                                  IsChecked="{Binding ActiveFilter, Converter={StaticResource EnumEquals}, ConverterParameter=broken, Mode=OneWay}"
+                                  Command="{Binding SetFilterCommand}" CommandParameter="broken"/>
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                <Button Classes="ghost" Height="36" Command="{Binding OpenPaperFormsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock Text="🖨" FontSize="14"/>
+                        <TextBlock Text="纸型管理"/>
+                    </StackPanel>
+                </Button>
+                <Button Classes="primary" Height="36" Command="{Binding RefreshCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="7">
+                        <TextBlock Text="⟳" FontSize="15"/>
+                        <TextBlock Text="重新检测"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- 列表区 -->
+        <Border Grid.Row="2" Background="{DynamicResource AppBackground}">
+            <Panel>
+                <!-- 扫描中 -->
+                <StackPanel IsVisible="{Binding IsScanning}" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" Spacing="14">
+                    <ProgressBar IsIndeterminate="True" Width="220" Height="4"/>
+                    <TextBlock Text="正在检测本机客户端程序…" Foreground="{DynamicResource TextSecondary}"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+
+                <!-- 错误/空态 -->
+                <StackPanel IsVisible="{Binding HasScanError}" HorizontalAlignment="Center"
+                            VerticalAlignment="Center" Spacing="14" MaxWidth="420">
+                    <TextBlock Text="⚠" FontSize="40" HorizontalAlignment="Center"
+                               Foreground="{DynamicResource WarnBrush}"/>
+                    <TextBlock Text="{Binding ScanError}" TextWrapping="Wrap" TextAlignment="Center"
+                               Foreground="{DynamicResource TextSecondary}"/>
+                    <Button Classes="primary" Content="重新检测" HorizontalAlignment="Center"
+                            Command="{Binding RefreshCommand}"/>
+                </StackPanel>
+
+                <!-- 产品列表 -->
+                <ScrollViewer IsVisible="{Binding !IsScanning}" Padding="28,14,28,20">
+                    <ItemsControl ItemsSource="{Binding FilteredProducts}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ProductItemViewModel">
+                                <Border Classes="card" Margin="0,0,0,12">
+                                    <Grid ColumnDefinitions="Auto,*,Auto">
+
+                                        <!-- 图标 -->
+                                        <Border Grid.Column="0" Width="48" Height="48" CornerRadius="12"
+                                                Background="{Binding IconBrush}" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding IconKey}" FontSize="18" FontWeight="Bold"
+                                                       Foreground="White" HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+
+                                        <!-- 信息区（非进行中） -->
+                                        <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center"
+                                                    Spacing="5" IsVisible="{Binding !IsBusy}">
+                                            <StackPanel Orientation="Horizontal" Spacing="10">
+                                                <TextBlock Text="{Binding DisplayName}" FontSize="15" FontWeight="SemiBold"
+                                                           Foreground="{DynamicResource TextPrimary}" VerticalAlignment="Center"/>
+                                                <Border CornerRadius="12" Padding="10,3" VerticalAlignment="Center"
+                                                        Background="{Binding Status, Converter={StaticResource StatusColor}, ConverterParameter=bg}">
+                                                    <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                                                        <Ellipse Width="7" Height="7" VerticalAlignment="Center"
+                                                                 Fill="{Binding Status, Converter={StaticResource StatusColor}, ConverterParameter=fg}"/>
+                                                        <TextBlock Text="{Binding StatusText}" FontSize="12" FontWeight="SemiBold"
+                                                                   Foreground="{Binding Status, Converter={StaticResource StatusColor}, ConverterParameter=fg}"/>
+                                                    </StackPanel>
+                                                </Border>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding Description}" FontSize="12.5"
+                                                       Foreground="{DynamicResource TextSecondary}" TextWrapping="Wrap"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="16">
+                                                <TextBlock Text="{Binding VersionText}" FontSize="12"
+                                                           Foreground="{DynamicResource TextTertiary}"/>
+                                                <TextBlock Text="{Binding SignatureText}" FontSize="12"
+                                                           Foreground="{DynamicResource TextTertiary}"
+                                                           IsVisible="{Binding SignatureText, Converter={StaticResource NotEmpty}}"/>
+                                            </StackPanel>
+                                            <!-- 操作结果提示 -->
+                                            <TextBlock Text="{Binding Message}" FontSize="12" TextWrapping="Wrap"
+                                                       IsVisible="{Binding HasMessage}" Margin="0,2,0,0"
+                                                       Foreground="{DynamicResource TextSecondary}"/>
+                                        </StackPanel>
+
+                                        <!-- 进度区（进行中） -->
+                                        <StackPanel Grid.Column="1" Margin="16,0,0,0" VerticalAlignment="Center"
+                                                    Spacing="7" IsVisible="{Binding IsBusy}">
+                                            <Grid ColumnDefinitions="*,Auto">
+                                                <TextBlock Grid.Column="0" Text="{Binding DisplayName}" FontSize="15"
+                                                           FontWeight="SemiBold" Foreground="{DynamicResource TextPrimary}"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Progress, StringFormat='{}{0:0}%'}"
+                                                           FontSize="12.5" FontWeight="Bold" Foreground="{DynamicResource AccentBrush}"/>
+                                            </Grid>
+                                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}" Height="6"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding ProgressText}" FontSize="12"
+                                                           Foreground="{DynamicResource TextSecondary}"/>
+                                                <TextBlock Text="✓ 数字签名与哈希校验通过" FontSize="12"
+                                                           Foreground="{DynamicResource OkBrush}"
+                                                           IsVisible="{Binding SecurityChecked}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <!-- 操作按钮区 -->
+                                        <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8"
+                                                    VerticalAlignment="Center">
+                                            <!-- 进行中：取消 -->
+                                            <Button Classes="ghost" Content="取消" Command="{Binding CancelCommand}"
+                                                    IsVisible="{Binding IsBusy}"/>
+
+                                            <!-- 非进行中：按状态显示主操作 -->
+                                            <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding !IsBusy}">
+                                                <Button Classes="ghost" Content="修复" Command="{Binding RepairCommand}"
+                                                        IsVisible="{Binding ShowRepairSecondary}"/>
+                                                <Button Classes="success" Content="安装" Command="{Binding PrimaryActionCommand}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource EnumEquals}, ConverterParameter=NotInstalled}"/>
+                                                <Button Classes="primary" Content="更新" Command="{Binding PrimaryActionCommand}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource EnumEquals}, ConverterParameter=UpdateAvailable}"/>
+                                                <Button Classes="warn" Content="修复" Command="{Binding PrimaryActionCommand}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource EnumEquals}, ConverterParameter=Broken}"/>
+                                                <Button Classes="ghost" Content="修复" Command="{Binding PrimaryActionCommand}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource EnumEquals}, ConverterParameter=UpToDate}"/>
+                                                <Button Classes="ghost" Content="重试检测" Command="{Binding RetryCommand}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource EnumEquals}, ConverterParameter=Unknown}"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </Panel>
+        </Border>
+
+        <!-- 底部状态栏 -->
+        <Border Grid.Row="3" Height="36" Background="{DynamicResource WindowBackground}"
+                BorderBrush="{DynamicResource CardStroke}" BorderThickness="0,1,0,0">
+            <Grid ColumnDefinitions="Auto,Auto,*,Auto" Margin="20,0">
+                <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                    <Ellipse Width="8" Height="8" Fill="{Binding IsOnline, Converter={StaticResource OnlineDot}}"/>
+                    <TextBlock Text="{Binding ConnectionText}" FontSize="12"
+                               Foreground="{DynamicResource TextSecondary}"/>
+                </StackPanel>
+                <TextBlock Grid.Column="1" Text="{Binding LastScanText}" FontSize="12" Margin="18,0,0,0"
+                           VerticalAlignment="Center" Foreground="{DynamicResource TextSecondary}"/>
+                <TextBlock Grid.Column="3" Text="{Binding AppVersionText}" FontSize="12"
+                           VerticalAlignment="Center" Foreground="{DynamicResource TextSecondary}"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
